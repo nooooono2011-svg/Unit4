@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Unit 4 - The World of TV</title>
+<style>
+:root{--bg:#fff8f1;--card:#fff;--ink:#2b2b2b;--accent:#e85d75;--accent2:#5b8def;--ok:#2f9e44;--bad:#d9485f}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS","Comic Sans MS",Arial,sans-serif;background:linear-gradient(135deg,#fff8f1,#f7f6ff);color:var(--ink)}
+header{position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);padding:12px 18px;border-bottom:1px solid #eee;z-index:5}
+.top{max-width:1100px;margin:auto;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{font-size:22px;font-weight:800}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav button,.btn{border:0;border-radius:14px;padding:10px 14px;font-weight:700;cursor:pointer;background:#eef2ff;color:#334}
+.nav button.active,.btn.primary{background:var(--accent2);color:white}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+main{max-width:1000px;margin:28px auto;padding:0 16px 60px}
+.card{background:var(--card);border-radius:22px;padding:24px;box-shadow:0 12px 35px rgba(0,0,0,.07);margin-bottom:18px}
+.hero{text-align:center;padding:38px 24px}
+h1{font-size:34px;margin:0 0 10px}
+h2{font-size:25px;margin:0 0 14px}
+h3{font-size:19px;margin:20px 0 10px}
+input[type=text],select,textarea{width:100%;padding:12px;border:2px solid #e6e6ef;border-radius:12px;font-size:16px}
+.nameRow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px auto;max-width:650px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.q{padding:16px;border:1px solid #ececf3;border-radius:16px;margin:12px 0;background:#fff}
+.opts{display:grid;gap:8px;margin-top:10px}
+.opt{padding:10px 12px;border:1px solid #ddd;border-radius:12px;cursor:pointer;background:#fafafa}
+.opt input{margin-right:8px}
+.hidden{display:none!important}
+.feedback{margin-top:8px;font-weight:700}
+.good{color:var(--ok)}
+.bad{color:var(--bad)}
+.footerbar{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap}
+.hearts{font-size:30px;letter-spacing:6px}
+.sectionTitle{display:flex;align-items:center;gap:10px}
+.badge{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#fff0f4}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}
+.small{font-size:14px;color:#666}
+.scoreBox{margin:16px auto 0;padding:14px;border-radius:16px;background:#f4f7ff;max-width:480px;font-weight:700}
+@media(max-width:700px){.nameRow,.grid2,.match-grid,.match-row{grid-template-columns:1fr}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">📺 Unit 4: The World of TV</div>
+    <div class="nav" id="nav">
+      <button data-go="home" class="active">🏠 Home</button>
+      <button data-go="listen">🎧 Listen & Discuss</button>
+      <button data-go="grammar">🧩 Grammar</button>
+      <button data-go="conversation">💬 Conversation & Reading</button>
+      <button data-go="form">📝 Form & Meaning</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="home" class="page">
+  <div class="card hero">
+    <div style="font-size:68px">🎬📺</div>
+    <h1>The World of TV</h1>
+    <p>Interactive Unit 4 booklet</p>
+    <div class="nameRow">
+      <input id="studentName" type="text" placeholder="Student name"/>
+      <input id="studentClass" type="text" placeholder="Class"/>
+    </div>
+    <button class="btn primary" id="startBtn">Start ▶</button>
+    <p class="small">Your answers are saved automatically on this device.</p>
+  </div>
+</section>
+
+<section id="listen" class="page hidden">
+  <div class="card">
+    <div class="sectionTitle"><div class="badge">🎧</div><h2>Listen & Discuss</h2></div>
+    <h3>1. Match words with the suitable picture</h3>
+    <div class="match-grid">
+      <div class="q">1. 🕵️ Detective<select data-save="ld_m1"><option value="">Choose</option><option>detective</option><option>horror</option><option>comedy</option><option>capture</option><option>animated</option></select></div>
+      <div class="q">2. 💀 Horror<select data-save="ld_m2"><option value="">Choose</option><option>detective</option><option>horror</option><option>comedy</option><option>capture</option><option>animated</option></select></div>
+      <div class="q">3. 🎭 Comedy<select data-save="ld_m3"><option value="">Choose</option><option>detective</option><option>horror</option><option>comedy</option><option>capture</option><option>animated</option></select></div>
+      <div class="q">4. 🎥 Capture<select data-save="ld_m4"><option value="">Choose</option><option>detective</option><option>horror</option><option>comedy</option><option>capture</option><option>animated</option></select></div>
+      <div class="q">5. 🧠 Animated<select data-save="ld_m5"><option value="">Choose</option><option>detective</option><option>horror</option><option>comedy</option><option>capture</option><option>animated</option></select></div>
+    </div>
+
+    <h3>2. Choose the correct answer</h3>
+    <div class="q" data-answer="animated">
+      <b>The Lion King is an example of ______ film.</b>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="q1" value="comedy">comedy</label>
+        <label class="opt"><input type="radio" name="q1" value="animated">animated</label>
+        <label class="opt"><input type="radio" name="q1" value="action">action</label>
+        <label class="opt"><input type="radio" name="q1" value="documentary">documentary</label>
+      </div><div class="feedback"></div>
+    </div>
+
+    <div class="q" data-answer="capture">
+      <b>A cameraman's job is to ______ the scenes on film.</b>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="q2" value="watch">watch</label>
+        <label class="opt"><input type="radio" name="q2" value="capture">capture</label>
+        <label class="opt"><input type="radio" name="q2" value="edit">edit</label>
+        <label class="opt"><input type="radio" name="q2" value="clean">clean</label>
+      </div><div class="feedback"></div>
+    </div>
+
+    <div class="q" data-answer="abrupt">
+      <b>The ______ ending of the film surprised us.</b>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="q3" value="abrupt">abrupt</label>
+        <label class="opt"><input type="radio" name="q3" value="crucial">crucial</label>
+        <label class="opt"><input type="radio" name="q3" value="important">important</label>
+        <label class="opt"><input type="radio" name="q3" value="death">death</label>
+      </div><div class="feedback"></div>
+    </div>
+
+    <h3>3. Classify the movies to their genres</h3>
+    <div class="q">
+      <div class="match-row"><span>Jurassic World</span><select data-save="movie1"><option value="">Choose</option><option>animated</option><option>Action adventure</option><option>documentary</option><option>biography</option><option>comedy</option><option>Science fiction</option></select></div><br>
+      <div class="match-row"><span>Lion King</span><select data-save="movie2"><option value="">Choose</option><option>animated</option><option>Action adventure</option><option>documentary</option><option>biography</option><option>comedy</option><option>Science fiction</option></select></div><br>
+      <div class="match-row"><span>Sonic</span><select data-save="movie3"><option value="">Choose</option><option>animated</option><option>Action adventure</option><option>documentary</option><option>biography</option><option>comedy</option><option>Science fiction</option></select></div><br>
+      <div class="match-row"><span>Bruce Lee: A Warrior’s Journey</span><select data-save="movie4"><option value="">Choose</option><option>animated</option><option>Action adventure</option><option>documentary</option><option>biography</option><option>comedy</option><option>Science fiction</option></select></div><br>
+      <div class="match-row"><span>A Beautiful Mind</span><select data-save="movie5"><option value="">Choose</option><option>animated</option><option>Action adventure</option><option>documentary</option><option>biography</option><option>comedy</option><option>Science fiction</option></select></div>
+    </div>
+    <div class="footerbar"><button class="btn" data-go="home">← Home</button><button class="btn primary" data-go="grammar">Next →</button></div>
+  </div>
+</section>
+
+<section id="grammar" class="page hidden">
+  <div class="card">
+    <div class="sectionTitle"><div class="badge">🧩</div><h2>Grammar</h2></div>
+    <h3>1. Choose the correct answer</h3>
+    <div id="grammarQuestions"></div>
+    <h3>2. Frayer Model: Independent Clause</h3>
+    <div class="grid2">
+      <textarea data-save="fr_def" placeholder="Definition"></textarea>
+      <textarea data-save="fr_char" placeholder="Characteristics"></textarea>
+      <textarea data-save="fr_ex" placeholder="Examples"></textarea>
+      <textarea data-save="fr_non" placeholder="Non-examples"></textarea>
+    </div>
+    <div class="footerbar"><button class="btn" data-go="listen">← Back</button><button class="btn primary" data-go="conversation">Next →</button></div>
+  </div>
+</section>
+
+<section id="conversation" class="page hidden">
+  <div class="card">
+    <div class="sectionTitle"><div class="badge">💬</div><h2>Conversation & Reading</h2></div>
+    <h3>1. Match the words with the definition</h3>
+    <div class="q">
+      <div class="match-row"><span>altered</span><select data-save="v1"><option value="">Choose</option><option>unusual and attractive</option><option>lasting</option><option>changed</option><option>extremely important</option><option>imperfections</option></select></div><br>
+      <div class="match-row"><span>crucial</span><select data-save="v2"><option value="">Choose</option><option>unusual and attractive</option><option>lasting</option><option>changed</option><option>extremely important</option><option>imperfections</option></select></div><br>
+      <div class="match-row"><span>defects</span><select data-save="v3"><option value="">Choose</option><option>unusual and attractive</option><option>lasting</option><option>changed</option><option>extremely important</option><option>imperfections</option></select></div><br>
+      <div class="match-row"><span>exotic</span><select data-save="v4"><option value="">Choose</option><option>unusual and attractive</option><option>lasting</option><option>changed</option><option>extremely important</option><option>imperfections</option></select></div>
+    </div>
+    <h3>Reading: “Formula Elements” of detective films</h3>
+    <p>Write five elements in the mind map:</p>
+    <div class="grid2">
+      <input data-save="mind1" type="text" placeholder="Element 1">
+      <input data-save="mind2" type="text" placeholder="Element 2">
+      <input data-save="mind3" type="text" placeholder="Element 3">
+      <input data-save="mind4" type="text" placeholder="Element 4">
+      <input data-save="mind5" type="text" placeholder="Element 5">
+    </div>
+    <div class="footerbar"><button class="btn" data-go="grammar">← Back</button><button class="btn primary" data-go="form">Next →</button></div>
+  </div>
+</section>
+
+<section id="form" class="page hidden">
+  <div class="card">
+    <div class="sectionTitle"><div class="badge">📝</div><h2>Form, Meaning & Functions</h2></div>
+    <h3>1. Choose the correct answer</h3>
+    <div id="formQuestions"></div>
+    <h3>2. Correct the mistakes</h3>
+    <div class="q"><p>I think this movie is <b>the best</b> than the one we saw last week.</p><input data-save="corr1" type="text" placeholder="Correct sentence"></div>
+    <div class="q"><p>The faster you finish, the <b>soon</b> you can relax.</p><input data-save="corr2" type="text" placeholder="Correct sentence"></div>
+    <div class="q"><p>Platinum is <b>more rare</b> than gold.</p><input data-save="corr3" type="text" placeholder="Correct sentence"></div>
+    <h3>3. Do as shown</h3>
+    <div class="q"><p>Lamia is tall. Jinan is tall. <em>(Join using as...as)</em></p><input data-save="do1" type="text"></div>
+    <div class="q"><p>Snakes / dangerous / cats. <em>(Make a comparison)</em></p><input data-save="do2" type="text"></div>
+    <div class="q"><p>not / as / tiger / elephant / big / is / an / as / a <em>(Re-arrange)</em></p><input data-save="do3" type="text"></div>
+    <div class="footerbar">
+      <button class="btn" data-go="conversation">← Back</button>
+      <button class="btn primary" id="finishBtn">Finish ✓</button>
+    </div>
+  </div>
+
+  <div class="card hero hidden" id="finishCard">
+    <h2>Excellent work, <span id="finishName">Student</span>!</h2>
+    <div class="hearts">❤️ ❤️ ❤️</div>
+    <p>You completed Unit 4: The World of TV.</p>
+    <div class="scoreBox" id="scoreBox"></div>
+    <p class="small" id="resultStatus"></p>
+    <button class="btn primary" data-go="home">Play again</button>
+  </div>
+</section>
+</main>
+
+<script>
+const SUPABASE_URL='https://qsywfgrwplqzlrrhdigt.supabase.co';
+const SUPABASE_KEY='sb_publishable_woKeBzsGYNHMcCgj8v2GQw_TJ8C-ptN';
+
+const pages=[...document.querySelectorAll('.page')];
+const navBtns=[...document.querySelectorAll('#nav button')];
+
+function go(id){
+  pages.forEach(p=>p.classList.toggle('hidden',p.id!==id));
+  navBtns.forEach(b=>b.classList.toggle('active',b.dataset.go===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+
+const studentName=document.getElementById('studentName');
+const studentClass=document.getElementById('studentClass');
+
+studentName.value=localStorage.getItem('u4_name')||'';
+studentClass.value=localStorage.getItem('u4_class')||'';
+
+studentName.addEventListener('input',()=>localStorage.setItem('u4_name',studentName.value));
+studentClass.addEventListener('input',()=>localStorage.setItem('u4_class',studentClass.value));
+
+document.getElementById('startBtn').addEventListener('click',()=>{
+  localStorage.setItem('u4_name',studentName.value.trim());
+  localStorage.setItem('u4_class',studentClass.value.trim());
+  go('listen');
+});
+
+const grammar=[
+["The weather is ______ hot nor cold.",["either","neither","both","not only"],"neither"],
+["She can speak ______ English and Spanish.",["either","neither","both","not only"],"both"],
+["He can have ______ tea or coffee.",["either","neither","both","not only"],"either"],
+["He is ______ poor but also unemployed.",["either","neither","both","not only"],"not only"],
+["I have got a house, ______ I haven't got a car.",["and","so","but","or"],"but"],
+["He can live in Dammam ______ Al-Khobar.",["and","so","or","yet"],"or"],
+["She has a brother ______ two sisters.",["and","so","but","yet"],"and"],
+["He was sick ______ he couldn't go to school.",["and","so","but","or"],"so"],
+["Hamad studied a lot ______ he didn't pass the exam.",["and","so","or","yet"],"yet"]
+];
+
+const form=[
+["English is ______ than French.",["easy","easier","easiest","more easy"],"easier"],
+["The Nile River is the ______ in the world.",["long","longer","longest","more long"],"longest"],
+["Bahrain is not as ______ as Saudi Arabia.",["big","bigger","biggest","the biggest"],"big"],
+["She has the ______ prestigious job.",["more","most","fewer","as"],"most"],
+["Your company offer is the ______ attractive.",["less","least","more","fewer"],"least"],
+["Physics is ______ than Chemistry.",["harder","hard","hardest","more hard"],"harder"],
+["Mount Everest is the ______ mountain in the world.",["tallest","taller","most tall","more tall"],"tallest"],
+["Oman is not as ______ as the UAE.",["large","larger","largest","the largest"],"large"]
+];
+
+function renderQuestions(targetId,items,prefix){
+  const box=document.getElementById(targetId);
+  box.innerHTML='';
+  items.forEach((q,i)=>{
+    const div=document.createElement('div');
+    div.className='q';
+    div.dataset.answer=q[2];
+    const saved=localStorage.getItem(prefix+i);
+    div.innerHTML=`<b>${i+1}. ${q[0]}</b><div class="opts">${
+      q[1].map(o=>`<label class="opt"><input type="radio" name="${prefix}${i}" value="${o}" ${saved===o?'checked':''}>${o}</label>`).join('')
+    }</div><div class="feedback"></div>`;
+    box.appendChild(div);
+  });
+}
+
+renderQuestions('grammarQuestions',grammar,'g');
+renderQuestions('formQuestions',form,'f');
+
+document.addEventListener('change',e=>{
+  if(e.target.matches('input[type=radio]')){
+    localStorage.setItem(e.target.name,e.target.value);
+    const q=e.target.closest('.q');
+    if(q&&q.dataset.answer){
+      const fb=q.querySelector('.feedback');
+      const ok=e.target.value===q.dataset.answer;
+      fb.textContent=ok?'✓ Correct':'Try again';
+      fb.className='feedback '+(ok?'good':'bad');
+    }
+  }
+  if(e.target.matches('[data-save]')){
+    localStorage.setItem(e.target.dataset.save,e.target.value);
+  }
+});
+
+document.addEventListener('input',e=>{
+  if(e.target.matches('[data-save]')){
+    localStorage.setItem(e.target.dataset.save,e.target.value);
+  }
+});
+
+document.querySelectorAll('[data-save]').forEach(el=>{
+  const v=localStorage.getItem(el.dataset.save);
+  if(v!==null) el.value=v;
+});
+
+function calculateScore(){
+  let score=0,total=0;
+  document.querySelectorAll('.q[data-answer]').forEach(q=>{
+    total++;
+    const checked=q.querySelector('input[type=radio]:checked');
+    if(checked&&checked.value===q.dataset.answer) score++;
+  });
+  return {score,total,percentage:total?Math.round((score/total)*100):0};
+}
+
+async function submitResult(){
+  const name=(localStorage.getItem('u4_name')||'').trim();
+  const className=(localStorage.getItem('u4_class')||'').trim();
+
+  if(!name||!className){
+    throw new Error('Please enter student name and class first.');
+  }
+
+  const r=calculateScore();
+  const attempts=(parseInt(localStorage.getItem('u4_attempts')||'0',10)||0)+1;
+
+  const response=await fetch(`${SUPABASE_URL}/rest/v1/student_results`,{
+    method:'POST',
+    headers:{
+      'apikey':SUPABASE_KEY,
+      'Content-Type':'application/json',
+      'Prefer':'return=minimal'
+    },
+    body:JSON.stringify({
+      student_name:name,
+      class_name:className,
+      score:r.score,
+      total:r.total,
+      percentage:r.percentage,
+      attempts
+    })
+  });
+
+  if(!response.ok){
+    throw new Error('Could not save result.');
+  }
+
+  localStorage.setItem('u4_attempts',String(attempts));
+  return {...r,attempts,name};
+}
+
+document.getElementById('finishBtn').addEventListener('click',async()=>{
+  const btn=document.getElementById('finishBtn');
+  const status=document.getElementById('resultStatus');
+
+  btn.disabled=true;
+  btn.textContent='Saving...';
+
+  try{
+    const r=await submitResult();
+    document.getElementById('finishName').textContent=r.name;
+    document.getElementById('scoreBox').textContent=`Score: ${r.score} / ${r.total}  •  ${r.percentage}%`;
+    status.textContent='✓ Your result was saved for your teacher.';
+    status.className='small good';
+  }catch(err){
+    document.getElementById('finishName').textContent=localStorage.getItem('u4_name')||'Student';
+    const r=calculateScore();
+    document.getElementById('scoreBox').textContent=`Score: ${r.score} / ${r.total}  •  ${r.percentage}%`;
+    status.textContent=err.message||'Result could not be saved. Please try again.';
+    status.className='small bad';
+  }finally{
+    document.getElementById('finishCard').classList.remove('hidden');
+    document.getElementById('finishCard').scrollIntoView({behavior:'smooth'});
+    btn.disabled=false;
+    btn.textContent='Finish ✓';
+  }
+});
+</script>
+</body>
+</html>
