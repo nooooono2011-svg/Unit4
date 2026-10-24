@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Unit 4 Teacher Board</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#fbf7ed,#f6eef7);color:#29263b}
+header{background:linear-gradient(135deg,#61346f,#bd6b86);color:#fff;padding:24px 16px}
+.wrap{max-width:1050px;margin:auto}
+h1{margin:0 0 7px;font-size:29px} .sub{opacity:.9}
+main{max-width:1050px;margin:18px auto;padding:0 14px 50px}
+.panel{background:#fff;border:1px solid #e4d8c8;border-radius:22px;padding:20px;margin-bottom:16px;box-shadow:0 10px 24px rgba(70,55,65,.07)}
+.hidden{display:none!important}
+.login{max-width:480px;margin:38px auto}
+label{display:block;font-weight:700;margin:10px 0 6px}
+input,select,button{width:100%;min-height:46px;border:1px solid #ddd1df;border-radius:13px;padding:10px 12px;font-size:15px}
+button{cursor:pointer;font-weight:800}
+.primary{background:#733f7d;color:#fff;border:0}
+.secondary{background:#f7f1f8;color:#51325d;border:0}
+.danger{background:#fff0f3;color:#b93f5e;border:0}
+.topbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.welcome{font-weight:800;font-size:18px}
+.logout{width:auto;padding:9px 14px;background:#f7f1f8;color:#51325d;border:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.stat{background:#fff;border:1px solid #e4d8c8;border-radius:18px;padding:17px;text-align:center}
+.num{font-size:30px;font-weight:900;margin-bottom:3px;color:#61346f}
+.tools{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.actions button{width:auto;padding:10px 15px}
+.tablewrap{overflow-x:auto;border:1px solid #eadfe8;border-radius:16px}
+table{width:100%;border-collapse:collapse;min-width:860px}
+th,td{padding:13px 11px;border-bottom:1px solid #eee6eb;text-align:left;white-space:nowrap}
+th{background:#f7f1f8;color:#51325d}
+tr:last-child td{border-bottom:none}
+.rowactions{display:flex;gap:7px}
+.rowactions button{width:auto;min-height:36px;padding:7px 10px;font-size:13px}
+.msg{margin-top:10px;font-size:14px}
+.good{color:#2f8b63} .bad{color:#c94e6b}
+@media(max-width:720px){.stats{grid-template-columns:1fr 1fr 1fr}.tools{grid-template-columns:1fr}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>🔒 Unit 4 Teacher Board</h1><div class="sub">Student results • The World of TV</div></div></header>
+<main>
+<section id="loginPanel" class="panel login">
+  <h2>Teacher Login</h2>
+  <label>Email</label><input id="email" type="email" autocomplete="username" placeholder="Teacher email">
+  <label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Password">
+  <button id="loginBtn" class="primary" style="margin-top:14px">Login</button>
+  <div id="loginMsg" class="msg"></div>
+</section>
+
+<section id="board" class="hidden">
+  <div class="topbar">
+    <div class="welcome">Welcome, Teacher Hakimah 👩‍🏫</div>
+    <button id="logoutBtn" class="logout">Logout</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num" id="submissions">0</div><div>Submissions</div></div>
+    <div class="stat"><div class="num" id="average">0%</div><div>Average</div></div>
+    <div class="stat"><div class="num" id="today">0</div><div>Today</div></div>
+  </div>
+  <div class="panel">
+    <div class="tools">
+      <input id="search" type="search" placeholder="Search student or class">
+      <select id="classFilter"><option value="">All classes</option></select>
+      <select id="sort">
+        <option value="newest">Newest first</option>
+        <option value="highest">Highest score</option>
+        <option value="lowest">Lowest score</option>
+        <option value="name">Student name</option>
+      </select>
+    </div>
+    <div class="actions">
+      <button id="refresh" class="primary">Refresh</button>
+      <button id="export" class="secondary">Export CSV</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Student</th><th>Class</th><th>Score</th><th>%</th><th>Attempts</th><th>Completed</th><th>Actions</th></tr></thead>
+        <tbody id="tbody"><tr><td colspan="7">Login to view results.</td></tr></tbody>
+      </table>
+    </div>
+    <div id="boardMsg" class="msg"></div>
+  </div>
+</section>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {"apiKey": "AIzaSyAdzc1hwXUe3zB9zh1s3r9jpMdRx3UGoQk", "authDomain": "unit4-f9df8.firebaseapp.com", "projectId": "unit4-f9df8", "storageBucket": "unit4-f9df8.firebasestorage.app", "messagingSenderId": "455544319351", "appId": "1:455544319351:web:34494c934804c80e1c4572", "measurementId": "G-63SDDQQB07"};
+const TEACHER_UID = "i7njeW6xWXS87TXPwGJDcwsCo1U2";
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let rows=[];
+
+const loginPanel=document.getElementById('loginPanel');
+const board=document.getElementById('board');
+const loginMsg=document.getElementById('loginMsg');
+const boardMsg=document.getElementById('boardMsg');
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function dateObj(v){
+  if(!v) return null;
+  if(typeof v.toDate==='function') return v.toDate();
+  if(v.seconds) return new Date(v.seconds*1000);
+  return new Date(v);
+}
+function fmt(v){const d=dateObj(v);return d&&!isNaN(d)?d.toLocaleString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
+
+document.getElementById('loginBtn').addEventListener('click',async()=>{
+  loginMsg.textContent='Signing in...'; loginMsg.className='msg';
+  try{
+    const cred=await signInWithEmailAndPassword(auth,document.getElementById('email').value.trim(),document.getElementById('password').value);
+    if(cred.user.uid!==TEACHER_UID){await signOut(auth);throw new Error('This account is not authorized for the Teacher Board.');}
+  }catch(e){loginMsg.textContent=e.message||'Login failed.';loginMsg.className='msg bad';}
+});
+document.getElementById('logoutBtn').addEventListener('click',()=>signOut(auth));
+
+onAuthStateChanged(auth,async user=>{
+  if(user && user.uid===TEACHER_UID){
+    loginPanel.classList.add('hidden'); board.classList.remove('hidden'); loginMsg.textContent='';
+    await loadResults();
+  }else{
+    board.classList.add('hidden'); loginPanel.classList.remove('hidden');
+  }
+});
+
+async function loadResults(){
+  boardMsg.textContent='Loading...'; boardMsg.className='msg';
+  try{
+    const snap=await getDocs(collection(db,'student_results'));
+    rows=snap.docs.map(d=>({id:d.id,...d.data()}));
+    boardMsg.textContent='';
+    updateStats(); updateClasses(); render();
+  }catch(e){console.error(e);boardMsg.textContent='Could not load results.';boardMsg.className='msg bad';}
+}
+function updateStats(){
+  document.getElementById('submissions').textContent=rows.length;
+  const avg=rows.length?Math.round(rows.reduce((s,r)=>s+Number(r.percentage||0),0)/rows.length):0;
+  document.getElementById('average').textContent=avg+'%';
+  const now=new Date();
+  document.getElementById('today').textContent=rows.filter(r=>{const d=dateObj(r.completed_at);return d&&d.toDateString()===now.toDateString();}).length;
+}
+function updateClasses(){
+  const f=document.getElementById('classFilter'), current=f.value;
+  const cs=[...new Set(rows.map(r=>r.class_name).filter(Boolean))].sort();
+  f.innerHTML='<option value="">All classes</option>'+cs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  f.value=current;
+}
+function render(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const cls=document.getElementById('classFilter').value;
+  const sort=document.getElementById('sort').value;
+  let out=rows.filter(r=>(!q||String(r.student_name||'').toLowerCase().includes(q)||String(r.class_name||'').toLowerCase().includes(q))&&(!cls||r.class_name===cls));
+  if(sort==='highest') out.sort((a,b)=>Number(b.percentage||0)-Number(a.percentage||0));
+  else if(sort==='lowest') out.sort((a,b)=>Number(a.percentage||0)-Number(b.percentage||0));
+  else if(sort==='name') out.sort((a,b)=>String(a.student_name||'').localeCompare(String(b.student_name||'')));
+  else out.sort((a,b)=>(dateObj(b.completed_at)?.getTime()||0)-(dateObj(a.completed_at)?.getTime()||0));
+  const tb=document.getElementById('tbody');
+  if(!out.length){tb.innerHTML='<tr><td colspan="7">No results found.</td></tr>';return;}
+  tb.innerHTML=out.map(r=>`<tr>
+    <td>${esc(r.student_name)}</td><td>${esc(r.class_name)}</td>
+    <td>${esc(r.score)} / ${esc(r.total)}</td><td>${esc(r.percentage)}%</td>
+    <td>${esc(r.attempts)}</td><td>${esc(fmt(r.completed_at))}</td>
+    <td><div class="rowactions"><button class="secondary reset" data-id="${r.id}">Reset attempts</button><button class="danger del" data-id="${r.id}">Delete</button></div></td>
+  </tr>`).join('');
+}
+document.getElementById('search').addEventListener('input',render);
+document.getElementById('classFilter').addEventListener('change',render);
+document.getElementById('sort').addEventListener('change',render);
+document.getElementById('refresh').addEventListener('click',loadResults);
+
+document.getElementById('tbody').addEventListener('click',async e=>{
+  const id=e.target.dataset.id;if(!id)return;
+  try{
+    if(e.target.classList.contains('reset')){await updateDoc(doc(db,'student_results',id),{attempts:1});}
+    if(e.target.classList.contains('del')){if(!confirm('Delete this result?'))return;await deleteDoc(doc(db,'student_results',id));}
+    await loadResults();
+  }catch(err){boardMsg.textContent='Action failed.';boardMsg.className='msg bad';}
+});
+
+document.getElementById('export').addEventListener('click',()=>{
+  const hdr=['Student','Class','Score','Total','Percentage','Attempts','Completed'];
+  const csv=[hdr,...rows.map(r=>[r.student_name,r.class_name,r.score,r.total,r.percentage,r.attempts,fmt(r.completed_at)])]
+    .map(row=>row.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Unit4_Results.csv';a.click();URL.revokeObjectURL(a.href);
+});
+</script>
+</body>
+</html>
