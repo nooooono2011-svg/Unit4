@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 4 - School Viewer</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:linear-gradient(135deg,#f7fbff,#eef5ff);
+    color:#1f2937;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:16px}
+  .hero{
+    background:#fff;border-radius:22px;padding:20px;
+    box-shadow:0 10px 28px rgba(0,0,0,.07);margin-bottom:14px;
+  }
+  h1{margin:0 0 8px;font-size:28px}
+  .sub{color:#64748b;margin:0}
+  .tabs{
+    display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;
+  }
+  .tab{
+    border:0;border-radius:14px;padding:12px 16px;
+    font-size:15px;font-weight:700;cursor:pointer;
+    background:#e9eef7;color:#334155;
+  }
+  .tab.active{background:#245ea8;color:#fff}
+  .panel{display:none}
+  .panel.active{display:block}
+  .booklet-box,.results-box{
+    background:#fff;border-radius:18px;padding:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);
+  }
+  .note{
+    margin:0 0 12px;padding:12px 14px;border-radius:12px;
+    background:#f8fbff;color:#475569;font-size:14px;
+  }
+  iframe{
+    width:100%;height:900px;border:1px solid #dbe4ee;
+    border-radius:14px;background:#fff;
+  }
+  .stats{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;margin:4px 0 14px;
+  }
+  .card{
+    background:white;border-radius:16px;padding:16px;
+    border:1px solid #edf1f5;
+  }
+  .num{font-size:28px;font-weight:800;margin-top:6px}
+  .tools{
+    display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;
+  }
+  input,select,button{
+    min-height:44px;border:1px solid #d7e0ea;border-radius:12px;
+    padding:10px 12px;font-size:15px;
+  }
+  input{flex:1;min-width:220px}
+  .refresh{background:#245ea8;color:white;border:none;font-weight:700}
+  .table-wrap{overflow-x:auto;border:1px solid #edf1f5;border-radius:14px}
+  table{width:100%;border-collapse:collapse;min-width:760px}
+  th,td{padding:13px 12px;border-bottom:1px solid #edf1f5;text-align:left;white-space:nowrap}
+  th{background:#f8fbff;font-size:13px;color:#475569}
+  tr:last-child td{border-bottom:none}
+  .empty,.error{text-align:center;padding:28px;color:#64748b}
+  .footer{text-align:center;color:#94a3b8;font-size:13px;padding:18px}
+  @media(max-width:620px){
+    .wrap{padding:10px}
+    h1{font-size:23px}
+    iframe{height:720px}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>📺 Unit 4 — The World of TV</h1>
+    <p class="sub">School administration viewer</p>
+    <div class="tabs">
+      <button class="tab active" data-tab="booklet">📘 Interactive Booklet</button>
+      <button class="tab" data-tab="results">📊 Student Results</button>
+    </div>
+  </div>
+
+  <section id="booklet" class="panel active">
+    <div class="booklet-box">
+      <p class="note">
+        Browse the same interactive booklet the students use. You can open the sections and view the questions directly.
+      </p>
+      <iframe src="./index.html" title="Unit 4 Interactive Booklet"></iframe>
+    </div>
+  </section>
+
+  <section id="results" class="panel">
+    <div class="results-box">
+      <p class="note">Read-only results view. No editing or deleting is available.</p>
+
+      <div class="stats">
+        <div class="card">
+          <div>Submissions</div>
+          <div class="num" id="submissions">0</div>
+        </div>
+        <div class="card">
+          <div>Average</div>
+          <div class="num" id="average">0%</div>
+        </div>
+      </div>
+
+      <div class="tools">
+        <input id="search" type="search" placeholder="Search student or class" />
+        <select id="classFilter">
+          <option value="">All classes</option>
+        </select>
+        <select id="sort">
+          <option value="newest">Newest first</option>
+          <option value="highest">Highest score</option>
+          <option value="lowest">Lowest score</option>
+          <option value="name">Student name</option>
+        </select>
+        <button class="refresh" id="refresh">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Class</th>
+              <th>Score</th>
+              <th>%</th>
+              <th>Attempts</th>
+              <th>Completed</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="6" class="empty">Loading results…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">Teacher Hakimah • Unit 4</div>
+</div>
+
+<script>
+const SUPABASE_URL='https://qsywfgrwplqzlrrhdigt.supabase.co';
+const SUPABASE_KEY='sb_publishable_woKeBzsGYNHMcCgj8v2GQw_TJ8C-ptN';
+
+let rows=[];
+let resultsLoaded=false;
+
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='results' && !resultsLoaded){
+      loadResults();
+    }
+  });
+});
+
+function formatDate(v){
+  if(!v) return '';
+  try{
+    return new Date(v).toLocaleString('en-GB',{
+      day:'2-digit',month:'2-digit',year:'numeric',
+      hour:'2-digit',minute:'2-digit'
+    });
+  }catch{return v}
+}
+
+function escapeHtml(s){
+  return String(s??'').replace(/[&<>"']/g,m=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
+}
+
+async function loadResults(){
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML='<tr><td colspan="6" class="empty">Loading results…</td></tr>';
+  try{
+    const res=await fetch(
+      `${SUPABASE_URL}/rest/v1/viewer_results?select=student_name,class_name,score,total,percentage,attempts,completed_at&order=completed_at.desc`,
+      {headers:{apikey:SUPABASE_KEY}}
+    );
+    if(!res.ok) throw new Error('Unable to load results');
+    rows=await res.json();
+    resultsLoaded=true;
+
+    document.getElementById('submissions').textContent=rows.length;
+    const avg=rows.length
+      ? Math.round(rows.reduce((s,r)=>s+Number(r.percentage||0),0)/rows.length)
+      : 0;
+    document.getElementById('average').textContent=avg+'%';
+
+    const classFilter=document.getElementById('classFilter');
+    const current=classFilter.value;
+    const classes=[...new Set(rows.map(r=>r.class_name).filter(Boolean))].sort();
+    classFilter.innerHTML='<option value="">All classes</option>'+
+      classes.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    classFilter.value=current;
+
+    render();
+  }catch(err){
+    tbody.innerHTML='<tr><td colspan="6" class="error">Could not load results.</td></tr>';
+  }
+}
+
+function render(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const cls=document.getElementById('classFilter').value;
+  const sort=document.getElementById('sort').value;
+
+  let out=rows.filter(r=>{
+    const matchText=!q ||
+      String(r.student_name||'').toLowerCase().includes(q) ||
+      String(r.class_name||'').toLowerCase().includes(q);
+    const matchClass=!cls || r.class_name===cls;
+    return matchText && matchClass;
+  });
+
+  if(sort==='highest') out.sort((a,b)=>Number(b.percentage)-Number(a.percentage));
+  else if(sort==='lowest') out.sort((a,b)=>Number(a.percentage)-Number(b.percentage));
+  else if(sort==='name') out.sort((a,b)=>String(a.student_name).localeCompare(String(b.student_name)));
+  else out.sort((a,b)=>new Date(b.completed_at)-new Date(a.completed_at));
+
+  const tbody=document.getElementById('tbody');
+  if(!out.length){
+    tbody.innerHTML='<tr><td colspan="6" class="empty">No results found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML=out.map(r=>`
+    <tr>
+      <td>${escapeHtml(r.student_name)}</td>
+      <td>${escapeHtml(r.class_name)}</td>
+      <td>${escapeHtml(r.score)} / ${escapeHtml(r.total)}</td>
+      <td>${escapeHtml(r.percentage)}%</td>
+      <td>${escapeHtml(r.attempts)}</td>
+      <td>${escapeHtml(formatDate(r.completed_at))}</td>
+    </tr>
+  `).join('');
+}
+
+document.getElementById('search').addEventListener('input',render);
+document.getElementById('classFilter').addEventListener('change',render);
+document.getElementById('sort').addEventListener('change',render);
+document.getElementById('refresh').addEventListener('click',loadResults);
+</script>
+</body>
+</html>
